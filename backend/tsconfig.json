@@ -14,7 +14,7 @@
     // "lib": ["esnext"],
     // "types": ["node"],
     "emitDecoratorMetadata": true,
-"experimentalDecorators": true,
+    "experimentalDecorators": true,
     // and npm install -D @types/node
 
     // Other Outputs
@@ -25,6 +25,7 @@
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+    "strictPropertyInitialization": false,
 
     // Style Options
     // "noImplicitReturns": true,
@@ -42,5 +43,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+  },
+  "include": ["src/**/*.ts", "src/@types/**/*.ts"],
+  "exclude": ["node_modules", "dist","test","**/*spec.ts"]
 }
