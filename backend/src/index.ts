@@ -1,7 +1,11 @@
+import "dotenv/config";
 import cors from "cors";
 import express from "express";
+import passport from "passport";
+import "./config/passport.config";
 import authRouter from "./routes/auth.route";
 import { config } from "./config/app.config";
+import eventRouter from "./routes/event.route";
 import { initializeDatabase } from "./database/database";
 import { errorHandler } from "./middleware/errorHandler.middleware";
 
@@ -10,7 +14,6 @@ const BASE_PATH = config.BASE_PATH;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(
   cors({
     origin: config.FRONTEND_ORIGIN,
@@ -18,7 +21,10 @@ app.use(
   }),
 );
 
+app.use(passport.initialize());
+
 app.use(`${BASE_PATH}/auth`, authRouter);
+app.use(`${BASE_PATH}/event`, eventRouter);
 
 app.use(errorHandler);
 

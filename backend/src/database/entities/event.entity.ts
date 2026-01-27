@@ -31,16 +31,19 @@ export class Event {
   @Column({ nullable: false })
   slug: string;
 
+  @Column({ nullable: false, default: false })
+  isPrivate: boolean;
+
   @Column({ nullable: false })
-  isPrivate: string;
+  duration: number;
 
   @Column({ nullable: false })
   locationType: EventLocationTypeEnum;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: false })
   isAllDay: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: false })
   isRecurring: boolean;
 
   @ManyToOne(() => User, (user) => user.events)
