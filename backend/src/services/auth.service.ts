@@ -1,13 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
-import { RegisterDto } from "../database/dto/auth.dto";
-import { User } from "../database/entities/user.entity";
-import { BadRequestException } from "../utils/app-error";
-import { AppDataSource } from "../config/database.config";
-import { Availability } from "../database/entities/availability.entity";
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from "../utils/app-error";
+import { signJwtToken } from "../utils/jwt";
 import {
   DayAvailability,
   DayOfWeekEnum,
 } from "../database/entities/day-availability";
+import { User } from "../database/entities/user.entity";
+import { AppDataSource } from "../config/database.config";
+import { LoginDto, RegisterDto } from "../database/dto/auth.dto";
+import { Availability } from "../database/entities/availability.entity";
 
 export const registerService = async (registerDto: RegisterDto) => {
   const userRepository = AppDataSource.getRepository(User);
@@ -44,6 +49,28 @@ export const registerService = async (registerDto: RegisterDto) => {
   await userRepository.save(user);
 
   return { user: user.omitPassword() };
+};
+
+export const loginService = async (loginDto: LoginDto) => {
+  const userRepository = AppDataSource.getRepository(User);
+
+  const user = await userRepository.findOne({
+    where: { email: loginDto.email },
+  });
+
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+
+  const isPasswordValid = await user.comparePassword(loginDto.password);
+
+  if (!isPasswordValid) {
+    throw new UnauthorizedException("Invalid email or password");
+  }
+
+  const { token, expiresAt } = await signJwtToken({ userId: user.id });
+
+  return { user: user.omitPassword(), accessToken: token, expiresAt };
 };
 
 async function generateUsername(name: string): Promise<string> {
