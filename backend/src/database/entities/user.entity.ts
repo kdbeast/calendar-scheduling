@@ -48,8 +48,9 @@ export class User {
   })
   integrations: Integration[];
 
-  @OneToMany(() => Availability, (availability) => availability.user)
-  @JoinColumn()
+  @OneToMany(() => Availability, (availability) => availability.user, {
+    cascade: true,
+  })
   availability: Availability[];
 
   @OneToMany(() => Meeting, (meeting) => meeting.user, {

@@ -19,7 +19,7 @@ export enum DayOfWeekEnum {
 }
 
 @Entity({ name: "day_availabilities" })
-export class DayAvailabilty {
+export class DayAvailability {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

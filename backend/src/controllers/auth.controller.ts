@@ -1,30 +1,19 @@
 import { Request, Response } from "express";
 import { HTTPSTATUS } from "../config/http.config";
-import { plainToInstance } from "class-transformer";
 import { RegisterDto } from "../database/dto/auth.dto";
-import { asyncHandler } from "../middleware/asyncHandler.middleware";
-import { validate } from "class-validator";
-import { ErrorCodeEnum } from "../enums/error-code.enum";
+import { registerService } from "../services/auth.service";
+import { asyncHandlerAndValidation } from "../middleware/withValidation.middleware";
 
-export const registerUser = asyncHandler(
-  async (req: Request, res: Response) => {
-    const registerDto = plainToInstance(RegisterDto, req.body);
+export const registerUser = asyncHandlerAndValidation(
+  RegisterDto,
+  "body",
+  async (req: Request, res: Response, registerDTO) => {
 
-    const errors = await validate(registerDto);
-
-    if (errors?.length > 0) {
-      return res.status(HTTPSTATUS.BAD_REQUEST).json({
-        message: "Validation failed",
-        errorCode: ErrorCodeEnum.VALIDATION_ERROR,
-        errors: errors.map((err) => ({
-          field: err.property,
-          message: err.constraints,
-        })),
-      });
-    }
+    const {user}  = await registerService(registerDTO);
 
     return res.status(HTTPSTATUS.CREATED).json({
       message: "User registered successfully",
+      user,
     });
   },
 );
