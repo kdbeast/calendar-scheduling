@@ -8,8 +8,9 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from "typeorm";
-import { compareValue, hashValue } from "../../utils/bcrypt";
+import { Event } from "./event.entity";
 import { Integration } from "./integretion";
+import { compareValue, hashValue } from "../../utils/bcrypt";
 
 @Entity({ name: "users" })
 export class User {
@@ -30,6 +31,11 @@ export class User {
 
   @Column({ nullable: true })
   imageUrl: string;
+
+  @OneToMany(() => Event, (event) => event.user, {
+    cascade: true,
+  })
+  events: Event[];
 
   @CreateDateColumn()
   createdAt: Date;
