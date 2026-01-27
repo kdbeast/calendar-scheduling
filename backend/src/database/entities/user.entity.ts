@@ -3,9 +3,13 @@ import {
   Entity,
   BeforeInsert,
   BeforeUpdate,
+  CreateDateColumn,
+  UpdateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from "typeorm";
 import { compareValue, hashValue } from "../../utils/bcrypt";
+import { Integration } from "./integretion";
 
 @Entity({ name: "users" })
 export class User {
@@ -26,6 +30,17 @@ export class User {
 
   @Column({ nullable: true })
   imageUrl: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToMany(() => Integration, (integration) => integration.user, {
+    cascade: true,
+  })
+  integrations: Integration[];
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @BeforeInsert()
   @BeforeUpdate()
