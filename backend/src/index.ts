@@ -1,11 +1,9 @@
 import cors from "cors";
+import express from "express";
+import authRouter from "./routes/auth.route";
 import { config } from "./config/app.config";
-import { HTTPSTATUS } from "./config/http.config";
-import { BadRequestException } from "./utils/app-error";
 import { initializeDatabase } from "./database/database";
-import express, { NextFunction, Request, Response } from "express";
 import { errorHandler } from "./middleware/errorHandler.middleware";
-import { asyncHandler } from "./middleware/asyncHandler.middleware";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
@@ -20,15 +18,7 @@ app.use(
   }),
 );
 
-app.get(
-  "/",
-  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    throw new BadRequestException("Internal Server Error");
-    res.status(HTTPSTATUS.OK).json({
-      message: "Welcome to the Calendar Scheduling API",
-    });
-  }),
-);
+app.use(`${BASE_PATH}/auth`, authRouter);
 
 app.use(errorHandler);
 
