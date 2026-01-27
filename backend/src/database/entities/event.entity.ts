@@ -1,12 +1,15 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
   UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./user.entity";
+import { Meeting } from "./meeting.entity";
 import { IntegrationAppTypeEnum } from "./integretion";
 
 export enum EventLocationTypeEnum {
@@ -42,6 +45,9 @@ export class Event {
 
   @ManyToOne(() => User, (user) => user.events)
   user: User;
+
+  @OneToMany(() => Meeting, (meeting) => meeting.event)
+  meetings: Meeting[];
 
   @UpdateDateColumn()
   updatedAt: Date;

@@ -7,10 +7,13 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   OneToMany,
+  JoinColumn,
 } from "typeorm";
 import { Event } from "./event.entity";
 import { Integration } from "./integretion";
 import { compareValue, hashValue } from "../../utils/bcrypt";
+import { Availability } from "./availability.entity";
+import { Meeting } from "./meeting.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -44,6 +47,15 @@ export class User {
     cascade: true,
   })
   integrations: Integration[];
+
+  @OneToMany(() => Availability, (availability) => availability.user)
+  @JoinColumn()
+  availability: Availability[];
+
+  @OneToMany(() => Meeting, (meeting) => meeting.user, {
+    cascade: true,
+  })
+  meetings: Meeting[];
 
   @UpdateDateColumn()
   updatedAt: Date;
