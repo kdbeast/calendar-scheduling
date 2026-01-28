@@ -35,10 +35,10 @@ export class Meeting {
   additionalInfo: string;
 
   @Column()
-  startDate: Date;
+  startTime: Date;
 
   @Column()
-  endDate: Date;
+  endTime: Date;
 
   @Column()
   meetLink: string;

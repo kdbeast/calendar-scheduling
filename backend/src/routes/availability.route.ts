@@ -2,6 +2,7 @@ import express from "express";
 import {
   getUserAvailabilityController,
   updateAvailabilityController,
+  getAvailabilityForPublicController,
 } from "../controllers/availability.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
 
@@ -12,6 +13,7 @@ availabilityRoute.get(
   passportAuthenticateJwt,
   getUserAvailabilityController,
 );
+availabilityRoute.get("/public/:eventId", getAvailabilityForPublicController);
 availabilityRoute.put(
   "/update",
   passportAuthenticateJwt,

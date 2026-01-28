@@ -1,8 +1,10 @@
 import {
-  getUserAvailabilityService,
-  updateAvailabilityService,
+    getUserAvailabilityService,
+    updateAvailabilityService,
+    getUserAvailabilityForPublicService,
 } from "../services/availability.service";
 import { HTTPSTATUS } from "../config/http.config";
+import { EventIdDTO } from "../database/dto/event.dto";
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler.middleware";
 import { UpdateAvailabilityDto } from "../database/dto/availability.dto";
@@ -31,6 +33,21 @@ export const updateAvailabilityController = asyncHandlerAndValidation(
 
     return res.status(HTTPSTATUS.OK).json({
       message: "Availability updated successfully",
+    });
+  },
+);
+
+export const getAvailabilityForPublicController = asyncHandlerAndValidation(
+  EventIdDTO,
+  "params",
+  async (req: Request, res: Response, EventIdDto) => {
+    const availability = await getUserAvailabilityForPublicService(
+      EventIdDto.eventId,
+    );
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Fetched user availability",
+      availability,
     });
   },
 );
