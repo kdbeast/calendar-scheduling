@@ -1,12 +1,17 @@
 import {
+  CreateEventDto,
+  EventIdDTO,
+  UserNameDTO,
+} from "../database/dto/event.dto";
+import {
   createEventService,
   getUserEventService,
   toggleEventStatusService,
+  getPublicEventByUsernameService,
 } from "../services/event.service";
 import { Request, Response } from "express";
 import { HTTPSTATUS } from "../config/http.config";
 import { asyncHandler } from "../middleware/asyncHandler.middleware";
-import { CreateEventDto, EventIdDTO } from "../database/dto/event.dto";
 import { asyncHandlerAndValidation } from "../middleware/withValidation.middleware";
 
 export const createEventController = asyncHandlerAndValidation(
@@ -44,6 +49,21 @@ export const toggleEventStatusController = asyncHandlerAndValidation(
     return res.status(HTTPSTATUS.OK).json({
       message: `Event set to ${event.isPrivate ? "private" : "public"} successfully`,
       event,
+    });
+  },
+);
+
+export const getPublicEventByUsernameController = asyncHandlerAndValidation(
+  UserNameDTO,
+  "params",
+  async (req: Request, res: Response, userNameDto) => {
+    const { user, events } = await getPublicEventByUsernameService(
+      userNameDto.username,
+    );
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Public events fetched successfully",
+      user,
+      events,
     });
   },
 );

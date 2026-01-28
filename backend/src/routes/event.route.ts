@@ -3,6 +3,7 @@ import {
   createEventController,
   getUserEventsController,
   toggleEventStatusController,
+  getPublicEventByUsernameController,
 } from "../controllers/event.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
 
@@ -14,6 +15,11 @@ eventRouter.put(
   "/toggle-privacy",
   passportAuthenticateJwt,
   toggleEventStatusController,
+);
+eventRouter.get(
+  "/public/:username",
+  passportAuthenticateJwt,
+  getPublicEventByUsernameController,
 );
 
 export default eventRouter;

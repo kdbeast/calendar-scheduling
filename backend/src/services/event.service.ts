@@ -77,3 +77,38 @@ export const toggleEventStatusService = async (
 
   return event;
 };
+
+export const getPublicEventByUsernameService = async (username: string) => {
+  const userRepository = AppDataSource.getRepository(User);
+
+  const user = await userRepository
+    .createQueryBuilder("user")
+    .leftJoinAndSelect("user.events", "event", "event.isPrivate = :isPrivate", {
+      isPrivate: false,
+    })
+    .loadRelationCountAndMap("event._count.meetings", "event.meetings")
+    .where("user.username = :username", { username })
+    .select(["user.id", "user.name", "user.imageUrl"])
+    .addSelect([
+      "event.id",
+      "event.title",
+      "event.description",
+      "event.slug",
+      "event.duration",
+    ])
+    .orderBy("event.createdAt", "DESC")
+    .getOne();
+
+  if (!user) {
+    throw new NotFoundException("User not found");
+  }
+
+  return {
+    user: {
+      name: user.name,
+      username: username,
+      imageUrl: user.imageUrl,
+    },
+    events: user.events,
+  };
+};

@@ -31,10 +31,10 @@ export class Event {
   @Column({ nullable: false })
   slug: string;
 
-  @Column({ nullable: false, default: false })
+  @Column({ default: false })
   isPrivate: boolean;
 
-  @Column({ nullable: false })
+  @Column({ default: 30 })
   duration: number;
 
   @Column({
