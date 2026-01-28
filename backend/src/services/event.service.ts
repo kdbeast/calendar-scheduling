@@ -53,3 +53,27 @@ export const getUserEventService = async (userId: string) => {
     username: user.username,
   };
 };
+
+export const toggleEventStatusService = async (
+  userId: string,
+  eventId: string,
+) => {
+  const eventRepository = AppDataSource.getRepository(Event);
+
+  const event = await eventRepository.findOne({
+    where: {
+      id: eventId,
+      user: { id: userId },
+    },
+  });
+
+  if (!event) {
+    throw new NotFoundException("Event not found");
+  }
+
+  event.isPrivate = !event.isPrivate;
+
+  await eventRepository.save(event);
+
+  return event;
+};

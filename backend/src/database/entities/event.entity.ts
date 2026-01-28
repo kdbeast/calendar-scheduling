@@ -37,7 +37,11 @@ export class Event {
   @Column({ nullable: false })
   duration: number;
 
-  @Column({type: "enum", enum: EventLocationTypeEnum})
+  @Column({
+    type: "enum",
+    nullable: true,
+    enum: EventLocationTypeEnum,
+  })
   locationType: EventLocationTypeEnum;
 
   @Column({ nullable: false, default: false })

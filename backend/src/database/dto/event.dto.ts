@@ -1,5 +1,6 @@
 import {
   IsEnum,
+  IsUUID,
   IsNumber,
   IsString,
   IsOptional,
@@ -23,13 +24,10 @@ export class CreateEventDto {
   @IsEnum(EventLocationTypeEnum)
   @IsNotEmpty()
   locationType: EventLocationTypeEnum;
+}
 
-  @IsOptional()
-  isPrivate: boolean;
-
-  @IsOptional()
-  isAllDay: boolean;
-
-  @IsOptional()
-  isRecurring: boolean;
+export class EventIdDTO {
+  @IsUUID(4, { message: "Invalid uuid" })
+  @IsNotEmpty()
+  eventId: string;
 }
