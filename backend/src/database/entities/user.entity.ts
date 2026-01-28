@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   OneToMany,
+  OneToOne,
   JoinColumn,
 } from "typeorm";
 import { Event } from "./event.entity";
@@ -48,10 +49,11 @@ export class User {
   })
   integrations: Integration[];
 
-  @OneToMany(() => Availability, (availability) => availability.user, {
+  @OneToOne(() => Availability, (availability) => availability.user, {
     cascade: true,
   })
-  availability: Availability[];
+  @JoinColumn()
+  availability: Availability;
 
   @OneToMany(() => Meeting, (meeting) => meeting.user, {
     cascade: true,

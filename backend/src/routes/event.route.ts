@@ -1,9 +1,11 @@
 import { Router } from "express";
 import {
   createEventController,
+  deleteEventController,
   getUserEventsController,
   toggleEventStatusController,
   getPublicEventByUsernameController,
+  getPublicEventByUsernameAndSlugController,
 } from "../controllers/event.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
 
@@ -21,5 +23,11 @@ eventRouter.get(
   passportAuthenticateJwt,
   getPublicEventByUsernameController,
 );
+eventRouter.get(
+  "/public/:username/:slug",
+  passportAuthenticateJwt,
+  getPublicEventByUsernameAndSlugController,
+);
+eventRouter.delete("/:eventId", passportAuthenticateJwt, deleteEventController);
 
 export default eventRouter;

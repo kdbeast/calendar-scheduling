@@ -45,7 +45,7 @@ export const registerService = async (registerDto: RegisterDto) => {
     }),
   });
 
-  user.availability = [availability];
+  user.availability = availability;
   await userRepository.save(user);
 
   return { user: user.omitPassword() };

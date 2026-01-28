@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToOne,
+  OneToOne,
 } from "typeorm";
 import { User } from "./user.entity";
 import { DayAvailability } from "./day-availability";
@@ -15,7 +16,7 @@ export class Availability {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => User, (user) => user.availability)
+  @OneToOne(() => User, (user) => user.availability)
   user: User;
 
   @OneToMany(

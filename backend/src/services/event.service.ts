@@ -5,8 +5,9 @@ import {
 import { slugify } from "../utils/helper";
 import { User } from "../database/entities/user.entity";
 import { AppDataSource } from "../config/database.config";
-import { CreateEventDto } from "../database/dto/event.dto";
 import { BadRequestException, NotFoundException } from "../utils/app-error";
+import { CreateEventDto, UserNameAndSlugDTO } from "../database/dto/event.dto";
+import { success } from "zod";
 
 export const createEventService = async (
   userId: string,
@@ -95,6 +96,7 @@ export const getPublicEventByUsernameService = async (username: string) => {
       "event.description",
       "event.slug",
       "event.duration",
+      "event.locationType",
     ])
     .orderBy("event.createdAt", "DESC")
     .getOne();
@@ -111,4 +113,53 @@ export const getPublicEventByUsernameService = async (username: string) => {
     },
     events: user.events,
   };
+};
+
+export const getPublicEventByUsernameAndSlugService = async (
+  usernameAndSlugDto: UserNameAndSlugDTO,
+) => {
+  const { username, slug } = usernameAndSlugDto;
+  const eventRepository = AppDataSource.getRepository(Event);
+
+  const event = await eventRepository
+    .createQueryBuilder("event")
+    .leftJoinAndSelect("event.user", "user")
+    .where("user.username = :username", { username })
+    .andWhere("event.slug = :slug", { slug })
+    .andWhere("event.isPrivate = :isPrivate", { isPrivate: false })
+    .addSelect([
+      "event.id",
+      "event.title",
+      "event.description",
+      "event.slug",
+      "event.duration",
+      "event.locationType",
+    ])
+    .addSelect(["user.id", "user.name", "user.imageUrl"])
+    .getOne();
+
+  if (!event) {
+    throw new NotFoundException("Event not found");
+  }
+
+  return event;
+};
+
+export const deleteEventService = async (userId: string, eventId: string) => {
+  const eventRepository = AppDataSource.getRepository(Event);
+
+  const event = await eventRepository.findOne({
+    where: {
+      id: eventId,
+      user: { id: userId },
+    },
+  });
+
+  if (!event) {
+    throw new NotFoundException("Event not found");
+  }
+
+  await eventRepository.remove(event);
+
+  return { success: true };
 };
