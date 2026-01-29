@@ -1,3 +1,4 @@
+import { decode, encode } from "js-base64";
 import { v4 as uuidv4 } from "uuid";
 
 export const slugify = (text: string) => {
@@ -10,4 +11,12 @@ export const slugify = (text: string) => {
     .replace(/^-+/, "")
     .replace(/-+$/, "");
   return `${slug}-${uuid}`;
+};
+
+export const encodeState = (data: any): string => {
+  return encode(JSON.stringify(data));
+};
+
+export const decodeState = (state: string): any => {
+  return JSON.parse(decode(state));
 };

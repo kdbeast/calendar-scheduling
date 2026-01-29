@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.route";
 import { config } from "./config/app.config";
 import eventRouter from "./routes/event.route";
 import { initializeDatabase } from "./database/database";
+import integrationRouter from "./routes/integretion.route";
 import availabilityRouter from "./routes/availability.route";
 import { errorHandler } from "./middleware/errorHandler.middleware";
 
@@ -27,6 +28,7 @@ app.use(passport.initialize());
 app.use(`${BASE_PATH}/auth`, authRouter);
 app.use(`${BASE_PATH}/event`, eventRouter);
 app.use(`${BASE_PATH}/availability`, availabilityRouter);
+app.use(`${BASE_PATH}/integration`, integrationRouter);
 
 app.use(errorHandler);
 

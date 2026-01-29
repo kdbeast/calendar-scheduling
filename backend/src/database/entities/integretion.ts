@@ -12,6 +12,7 @@ import { User } from "./user.entity";
 export enum IntegrationProviderEnum {
   GOOGLE = "GOOGLE",
   ZOOM = "ZOOM",
+  MICROSOFT = "MICROSOFT",
 }
 
 export enum IntegrationAppTypeEnum {
@@ -20,8 +21,8 @@ export enum IntegrationAppTypeEnum {
   OUTLOOK_CALENDAR = "OUTLOOK_CALENDAR",
 }
 export enum IntegrationCategoryEnum {
-  CALENDAR_AND_VIDEO_CONFERENCE = "CALENDAR_AND_VIDEO_CONFERENCE",
-  VIDEO_CONFERENCE = "VIDEO_CONFERENCE",
+  CALENDAR_AND_VIDEO_CONFERENCING = "CALENDAR_AND_VIDEO_CONFERENCING",
+  VIDEO_CONFERENCING = "VIDEO_CONFERENCING",
   CALENDAR = "CALENDAR",
 }
 
