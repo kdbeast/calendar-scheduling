@@ -1,6 +1,9 @@
 import express from "express";
+import {
+  getUserMeetingsController,
+  createMeetingBookingForGuestController,
+} from "../controllers/meeting.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
-import { getUserMeetingsController } from "../controllers/meeting.controller";
 
 const meetingRouter = express.Router();
 
@@ -9,5 +12,7 @@ meetingRouter.get(
   passportAuthenticateJwt,
   getUserMeetingsController,
 );
+
+meetingRouter.post("/public/create", createMeetingBookingForGuestController);
 
 export default meetingRouter;

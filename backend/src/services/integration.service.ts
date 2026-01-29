@@ -135,15 +135,23 @@ export const createIntegrationService = async (data: {
 
 export const validateGoogleToken = async (
   accessToken: string,
-  refreshToken: string,
+  refreshToken: string | null,
   expiryDate: number | null,
-) => {
+): Promise<string> => {
   if (expiryDate === null || Date.now() > expiryDate) {
+    if (!refreshToken) {
+      throw new BadRequestException(
+        "No refresh token available to refresh access token",
+      );
+    }
     googleOAuth2Client.setCredentials({
       refresh_token: refreshToken,
     });
 
     const { credentials } = await googleOAuth2Client.refreshAccessToken();
+    if (!credentials.access_token) {
+      throw new BadRequestException("Failed to refresh Google access token");
+    }
     return credentials.access_token;
   }
 
