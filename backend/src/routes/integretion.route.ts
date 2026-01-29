@@ -3,6 +3,7 @@ import {
   connectAppController,
   checkIntegrationController,
   getUserIntegrationsController,
+  googleOAuthCallbackController,
 } from "../controllers/integration.controller";
 import { passportAuthenticateJwt } from "../config/passport.config";
 
@@ -25,5 +26,7 @@ integrationRouter.get(
   passportAuthenticateJwt,
   connectAppController,
 );
+
+integrationRouter.get("/google/callback", googleOAuthCallbackController);
 
 export default integrationRouter;

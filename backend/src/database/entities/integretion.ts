@@ -1,11 +1,11 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  JoinColumn,
   UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./user.entity";
 
@@ -53,7 +53,7 @@ export class Integration {
   access_token: string;
 
   @Column({ nullable: true })
-  refresh_token: string;
+  refresh_token: string | null;
 
   @Column({ type: "bigint", nullable: true })
   expiry_date: number | null;
@@ -63,6 +63,9 @@ export class Integration {
 
   @Column({ default: true })
   isConnected: boolean;
+
+  @Column({ nullable: false })
+  userId: string;
 
   @ManyToOne(() => User, (user) => user.integrations)
   @JoinColumn({ name: "userId" })

@@ -1,14 +1,13 @@
-import { encode } from "js-base64";
-import { AppDataSource } from "../config/database.config";
-import { googleOAuth2Client } from "../config/oauth.config";
 import {
   Integration,
   IntegrationAppTypeEnum,
   IntegrationCategoryEnum,
   IntegrationProviderEnum,
 } from "../database/entities/integretion";
-import { BadRequestException } from "../utils/app-error";
 import { encodeState } from "../utils/helper";
+import { BadRequestException } from "../utils/app-error";
+import { AppDataSource } from "../config/database.config";
+import { googleOAuth2Client } from "../config/oauth.config";
 
 const appTypeToProviderMap: Record<
   IntegrationAppTypeEnum,
@@ -96,4 +95,57 @@ export const connectAppService = async (
   }
 
   return { url: authUrl };
+};
+
+export const createIntegrationService = async (data: {
+  userId: string;
+  provider: IntegrationProviderEnum;
+  category: IntegrationCategoryEnum;
+  app_type: IntegrationAppTypeEnum;
+  access_token: string;
+  refresh_token: string | null;
+  expiry_date: number | null;
+  metadata: any;
+}) => {
+  const integrationRepository = AppDataSource.getRepository(Integration);
+  const existingIntegration = await integrationRepository.findOne({
+    where: { user: { id: data.userId }, app_type: data.app_type },
+  });
+
+  if (existingIntegration) {
+    throw new BadRequestException(`${data.app_type} already connected`);
+  }
+
+  const integration = integrationRepository.create({
+    provider: data.provider,
+    category: data.category,
+    app_type: data.app_type,
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expiry_date: data.expiry_date,
+    metadata: data.metadata,
+    userId: data.userId,
+    isConnected: true,
+  });
+
+  await integrationRepository.save(integration);
+
+  return integration;
+};
+
+export const validateGoogleToken = async (
+  accessToken: string,
+  refreshToken: string,
+  expiryDate: number | null,
+) => {
+  if (expiryDate === null || Date.now() > expiryDate) {
+    googleOAuth2Client.setCredentials({
+      refresh_token: refreshToken,
+    });
+
+    const { credentials } = await googleOAuth2Client.refreshAccessToken();
+    return credentials.access_token;
+  }
+
+  return accessToken;
 };
