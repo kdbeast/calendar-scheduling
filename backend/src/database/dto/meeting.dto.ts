@@ -1,4 +1,5 @@
 import {
+  IsUUID,
   IsEmail,
   IsString,
   IsNotEmpty,
@@ -30,4 +31,11 @@ export class CreateMeetingDto {
   @IsString()
   @IsOptional()
   additionalInfo: string;
+}
+
+export class MeetingIdDto {
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID(4, { message: "Invalid uuid" })
+  meetingId: string;
 }

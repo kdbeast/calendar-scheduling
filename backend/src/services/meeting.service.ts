@@ -2,22 +2,23 @@ import {
   MeetingFilterEnum,
   MeetingFilterEnumType,
 } from "../enums/meeting.enum";
-import { LessThan, MoreThan } from "typeorm";
-import { BadRequestException, NotFoundException } from "../utils/app-error";
-import { AppDataSource } from "../config/database.config";
+import { google } from "googleapis";
 import {
   Event,
   EventLocationTypeEnum,
 } from "../database/entities/event.entity";
-import { CreateMeetingDto } from "../database/dto/meeting.dto";
 import {
   Integration,
   IntegrationAppTypeEnum,
+  IntegrationCategoryEnum,
 } from "../database/entities/integretion";
-import { Meeting, MeetingStatus } from "../database/entities/meeting.entity";
-import { google } from "googleapis";
-import { validateGoogleToken } from "./integration.service";
+import { LessThan, MoreThan } from "typeorm";
+import { AppDataSource } from "../config/database.config";
 import { googleOAuth2Client } from "../config/oauth.config";
+import { validateGoogleToken } from "./integration.service";
+import { CreateMeetingDto } from "../database/dto/meeting.dto";
+import { BadRequestException, NotFoundException } from "../utils/app-error";
+import { Meeting, MeetingStatus } from "../database/entities/meeting.entity";
 
 export const getUserMeetingsService = async (
   userId: string,
@@ -131,6 +132,61 @@ export const createMeetingBookingForGuestService = async (
     meeting,
     meetLink,
   };
+};
+
+export const cancelMeetingService = async (meetingId: string) => {
+  const meetingRepository = AppDataSource.getRepository(Meeting);
+  const integrationRepository = AppDataSource.getRepository(Integration);
+
+  const meeting = await meetingRepository.findOne({
+    where: { id: meetingId },
+    relations: ["event", "event.user"],
+  });
+
+  if (!meeting) throw new NotFoundException("Meeting not found");
+
+  try {
+    const calendarIntegration = await integrationRepository.findOne({
+      where: [
+        {
+          user: { id: meeting.event.user.id },
+          category: IntegrationCategoryEnum.CALENDAR_AND_VIDEO_CONFERENCING,
+        },
+        {
+          user: { id: meeting.event.user.id },
+          category: IntegrationCategoryEnum.CALENDAR,
+        },
+      ],
+    });
+
+    if (calendarIntegration) {
+      const { calendar, calendarType } = await getCalendarClient(
+        calendarIntegration.app_type,
+        calendarIntegration.access_token,
+        calendarIntegration.refresh_token,
+        calendarIntegration.expiry_date,
+      );
+      switch (calendarType) {
+        case IntegrationAppTypeEnum.GOOGLE_MEET_AND_CALENDAR:
+          await calendar.events.delete({
+            calendarId: "primary",
+            eventId: meeting.calendarEventId,
+          });
+          break;
+        default:
+          throw new BadRequestException(
+            `Unsupported Calendar provider: ${calendarIntegration.app_type}`,
+          );
+      }
+    }
+  } catch (error) {
+    throw new BadRequestException("Failed to cancel meeting");
+  }
+
+  meeting.status = MeetingStatus.CANCELLED;
+  await meetingRepository.save(meeting);
+
+  return { success: true };
 };
 
 async function getCalendarClient(

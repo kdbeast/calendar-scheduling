@@ -3,13 +3,14 @@ import {
   MeetingFilterEnumType,
 } from "../enums/meeting.enum";
 import {
+    cancelMeetingService,
   getUserMeetingsService,
   createMeetingBookingForGuestService,
 } from "../services/meeting.service";
 import { Request, Response } from "express";
 import { HTTPSTATUS } from "../config/http.config";
-import { CreateMeetingDto } from "../database/dto/meeting.dto";
 import { asyncHandler } from "../middleware/asyncHandler.middleware";
+import { CreateMeetingDto, MeetingIdDto } from "../database/dto/meeting.dto";
 import { asyncHandlerAndValidation } from "../middleware/withValidation.middleware";
 
 export const getUserMeetingsController = asyncHandler(
@@ -39,6 +40,18 @@ export const createMeetingBookingForGuestController = asyncHandlerAndValidation(
       message: "Meeting created successfully",
       meeting,
       meetLink,
+    });
+  },
+);
+
+export const cancelMeetingController = asyncHandlerAndValidation(
+  MeetingIdDto,
+  "params",
+  async (req: Request, res: Response, MeetingIdDto) => {
+    await cancelMeetingService(MeetingIdDto.meetingId);
+
+    res.status(HTTPSTATUS.OK).json({
+      message: "Meeting cancelled successfully",
     });
   },
 );
