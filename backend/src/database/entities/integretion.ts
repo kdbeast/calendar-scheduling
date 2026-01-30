@@ -52,7 +52,7 @@ export class Integration {
   @Column()
   access_token: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   refresh_token: string | null;
 
   @Column({ type: "bigint", nullable: true })
