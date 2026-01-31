@@ -32,7 +32,7 @@ const Meetings = () => {
       ) : (
         <div className="w-full">
           <Card
-            className="p-0 shadow-[0_1px_6px_0_rgb(0_0_0_/_10%)]
+            className="p-0 shadow-[0_1px_6px_0_rgb(0_0_0/10%)]
         min-h-[220px] border border-[#D4E16F)] bg-white rounded-[8px]
         "
           >
