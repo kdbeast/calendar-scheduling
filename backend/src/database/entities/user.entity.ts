@@ -66,15 +66,15 @@ export class User {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    if (this.password) {
-      this.password = await hashValue(this.password, 12);
+    if (this.password && !this.password.startsWith("$2b$")) {
+      this.password = await hashValue(this.password);
     }
   }
-  async comparePassword(password: string): Promise<boolean> {
-    return await compareValue(password, this.password);
+  async comparePassword(candidatePassword: string): Promise<boolean> {
+    return await compareValue(candidatePassword, this.password);
   }
   omitPassword(): Omit<User, "password"> {
-    const { password, ...user } = this;
-    return user as Omit<User, "password">;
+    const { password, ...userWithoutPassword } = this;
+    return userWithoutPassword as Omit<User, "password">;
   }
 }

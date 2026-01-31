@@ -7,7 +7,6 @@ import { User } from "../database/entities/user.entity";
 import { AppDataSource } from "../config/database.config";
 import { BadRequestException, NotFoundException } from "../utils/app-error";
 import { CreateEventDto, UserNameAndSlugDTO } from "../database/dto/event.dto";
-import { success } from "zod";
 
 export const createEventService = async (
   userId: string,

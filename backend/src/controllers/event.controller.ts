@@ -36,8 +36,10 @@ export const getUserEventsController = asyncHandler(
     const { events, username } = await getUserEventService(userId);
     return res.status(HTTPSTATUS.OK).json({
       message: "User events fetched successfully",
-      events,
-      username,
+      data: {
+        events,
+        username,
+      },
     });
   },
 );

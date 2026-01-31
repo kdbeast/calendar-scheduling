@@ -1,7 +1,7 @@
 import {
-    getUserAvailabilityService,
-    updateAvailabilityService,
-    getUserAvailabilityForPublicService,
+  getUserAvailabilityService,
+  updateAvailabilityService,
+  getUserAvailabilityForPublicService,
 } from "../services/availability.service";
 import { HTTPSTATUS } from "../config/http.config";
 import { EventIdDTO } from "../database/dto/event.dto";
@@ -47,7 +47,7 @@ export const getAvailabilityForPublicController = asyncHandlerAndValidation(
 
     return res.status(HTTPSTATUS.OK).json({
       message: "Fetched user availability",
-      availability,
+      data: availability,
     });
   },
 );

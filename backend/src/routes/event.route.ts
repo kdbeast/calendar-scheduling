@@ -11,21 +11,16 @@ import { passportAuthenticateJwt } from "../config/passport.config";
 
 const eventRouter = Router();
 
-eventRouter.post("/create", passportAuthenticateJwt, createEventController);
 eventRouter.get("/all", passportAuthenticateJwt, getUserEventsController);
+eventRouter.post("/create", passportAuthenticateJwt, createEventController);
 eventRouter.put(
   "/toggle-privacy",
   passportAuthenticateJwt,
   toggleEventStatusController,
 );
-eventRouter.get(
-  "/public/:username",
-  passportAuthenticateJwt,
-  getPublicEventByUsernameController,
-);
+eventRouter.get("/public/:username", getPublicEventByUsernameController);
 eventRouter.get(
   "/public/:username/:slug",
-  passportAuthenticateJwt,
   getPublicEventByUsernameAndSlugController,
 );
 eventRouter.delete("/:eventId", passportAuthenticateJwt, deleteEventController);
